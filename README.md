@@ -63,10 +63,7 @@
 
 需要 Node.js 22.12 以上、Rust stable 和 [Tauri 2 的系统依赖](https://v2.tauri.app/start/prerequisites/)。
 
-项目引用的录制探针 `@henjicc/web-replay-probe` 还没有发布到 npm，需要把 [Henji-AI](https://github.com/henjicc/Henji-AI) 仓库克隆到本仓库旁边：
-
 ```bash
-git clone https://github.com/henjicc/Henji-AI.git
 git clone https://github.com/henjicc/zhiduoshao.git
 cd zhiduoshao
 npm ci

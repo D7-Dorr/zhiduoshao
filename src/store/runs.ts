@@ -8,7 +8,6 @@ import type { GNode } from "./types.ts";
 import { addAt, addNode, commitNodes, get, isReady, newNode, parkedDone, patch, patchAt, pathOf, relatedQuestions, set, stripCites, toContext } from "./core.ts";
 import { toast } from "./toast.ts";
 import { revealBranch } from "./view.ts";
-import { reportAction } from "@henjicc/web-replay-probe";
 
 // 请求编排：发起回答、综合、详解与输入框路由，把流式事件写回节点，并管理取消。
 // 每个节点同一时间各类请求最多一个：回答 / 综合用节点 id，详解与输入框各有自己的键，互不打断。
@@ -82,9 +81,6 @@ function applyEvent(map: string, id: string, ev: StreamEvent) {
   const patch = (fn: Parameters<typeof patchAt>[2]) => patchAt(map, id, fn);
   switch (ev.type) {
     case "stage":
-      // 给痕迹录制标时间轴：每轮检索开始、读完来源开始写答案
-      if (ev.stage === "search") reportAction("search", { nodeId: id });
-      else if (ev.stage === "compose") reportAction("sources-read", { nodeId: id });
       return patch((n) => ({
         // 换阶段时思考流接着往下滚、另起一行，不清空：清空会让卡片在思考流和骨架屏之间来回切换，看起来一闪一闪
         stage: ev.stage, stageDetail: ev.detail ?? null, thinking: n.stage === ev.stage || !n.thinking || n.thinking.endsWith("\n") ? n.thinking : n.thinking + "\n",
@@ -128,7 +124,6 @@ function applyEvent(map: string, id: string, ev: StreamEvent) {
     case "done":
       patch((n) => ({ status: "ready", stage: null, answeredAt: Date.now(), memory: n.memory && trimNote({ ...n.memory, sites: usedSites(n.memory, n.queries) }) }));
       if (mapOf() === map && get().activeId === id) revealBranch(id, true);
-      reportAction("answered", { nodeId: id });
       return finished(map, id);
     case "error":
       patch(() => ({ status: "error", error: ev.message, errorCode: ev.code ?? null, errorHint: ev.hint ?? null }));
@@ -172,7 +167,6 @@ export function runAnswer(id: string, more?: AnswerRequest["more"]) {
   const search = n.searchMode ? n.searchMode === "on" : get().search;
   // 第一次回答才算一次提问（重试、补充检索、看看新进展不算），记进个人记忆
   if (!more && !n.since && !n.answeredAt && !n.compareOf) noteAsk(n.q, map);
-  reportAction("ask", { nodeId: id, question: n.q });
   // 看看新进展：上一层已有的来源不算新内容；搜索更多来源：上次复查剔除的不再搜回来
   const exclude = [
     ...(n.since && n.parent ? get().nodes[n.parent]?.sources.flatMap(articleKeys) ?? [] : []),

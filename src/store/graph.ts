@@ -7,7 +7,6 @@ import { activate, freeAt, freeSpot, revealBranch, startView } from "./view.ts";
 import { recordAngle, recordSite } from "../memory/store.ts";
 import { openExternal } from "../lib/external.ts";
 import { useSettings } from "../settings/store.ts";
-import { reportAction } from "@henjicc/web-replay-probe";
 import { toast } from "./toast.ts";
 
 // 画布对界面的入口：状态读取与界面触发的操作。状态与节点基础操作在 core.ts，视角在 view.ts，请求编排在 runs.ts。
@@ -338,7 +337,6 @@ export const actions = {
     followSpine(id);
     commitNodes(get().nodes, { ...focusOf(id), drawerId: id, reading: null });
     revealBranch(id);
-    reportAction("detail", { nodeId: id });
   },
   closeDrawer: () => set({ drawerId: null, reading: null }),
 

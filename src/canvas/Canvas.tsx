@@ -350,7 +350,7 @@ function EndMarks() {
   const revealing = useGraph((s) => s.revealing);
   const focus = focusSets({ nodes, activeId });
   return Object.entries(ends).map(([id, b]) => (
-    <div key={id} className={`end-mark${focus && !focus.lit.has(id) ? " dim" : ""}${revealing[id] ? " is-held" : ""}`} data-replay-id={`settled-${id}`}
+    <div key={id} className={`end-mark${focus && !focus.lit.has(id) ? " dim" : ""}${revealing[id] ? " is-held" : ""}`}
       style={{ transform: `translate(${b.x}px, ${b.y}px)`, height: b.h }}>
       <i className="end-dot" aria-hidden="true" />这条线问透了
     </div>

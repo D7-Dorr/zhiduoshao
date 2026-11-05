@@ -98,7 +98,7 @@ function Tag({ n }: { n: GNode }) {
   if (n.compareOf) return <div className={`card-tag is-compare${n.searchMode === "off" ? " is-offline" : ""}`}>{n.searchMode === "off" ? "断网对比" : "联网对比"}</div>;
   if (n.links.length && n.op) return <div className="card-tag is-link">{OP_LABEL[n.op]} {n.links.length} 个节点</div>;
   if (n.status === "error") return <div className="card-tag is-error">未完成</div>;
-  if (n.framed) return <div className="card-tag" data-replay-id={`framed-${n.id}`}>拆开来看</div>;
+  if (n.framed) return <div className="card-tag">拆开来看</div>;
   return n.dir ? <div className="card-tag">{n.dir}</div> : null;
 }
 
@@ -369,7 +369,7 @@ export const NodeView = memo(function NodeView({ id }: { id: string }) {
   const cls = ["node", measured && "is-placed", active && "is-active", selected && "is-selected", dim && "dim", question && "is-question", held && "is-held", !n.parent && !n.links.length && "is-root"]
     .filter(Boolean).join(" ");
   return (
-    <div ref={ref} className={cls} data-id={id} data-replay-id={`node-${id}`} style={{ transform: `translate(${box.x}px, ${box.y}px)` }}
+    <div ref={ref} className={cls} data-id={id} style={{ transform: `translate(${box.x}px, ${box.y}px)` }}
       onPointerEnter={() => actions.hover(id)} onPointerLeave={() => actions.hover(null)}>
       {question ? <QuestionPill n={n} /> : <CiteNode.Provider value={id}><AnswerCard n={n} active={active} /></CiteNode.Provider>}
     </div>

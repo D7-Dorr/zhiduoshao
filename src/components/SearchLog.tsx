@@ -136,7 +136,7 @@ export function SearchLogSection({ n }: { n: GNode }) {
 function DroppedStep({ n }: { n: GNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <li className="research-step" data-replay-id={`dropped-${n.id}`}>
+    <li className="research-step">
       <button type="button" className="research-toggle" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
         <b>判断：够了，剔除 {n.dropped.length} 条</b>
         <ChevronDown size={14} strokeWidth={1.8} aria-hidden="true" />
@@ -164,7 +164,7 @@ function DroppedStep({ n }: { n: GNode }) {
 function WrittenStep({ n }: { n: GNode }) {
   const { read, written } = readWritten(n.sources, n.summary, n.points);
   return (
-    <li className="research-step is-done" data-replay-id={`written-${n.id}`}>
+    <li className="research-step is-done">
       <div className="research-step-head"><b>写成答案</b></div>
       <div className="research-step-sub">读了约 {approxCount(read)} 字，写成 {written} 字</div>
       <div className="written-bar" aria-hidden="true"><i style={{ width: `max(2px, ${(written / Math.max(read, written, 1)) * 100}%)` }} /></div>

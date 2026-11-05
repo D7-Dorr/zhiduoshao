@@ -26,7 +26,7 @@ function Row({ m, query = "", current, active, onHover, style }: RowProps) {
   const running = useParked((s) => s.ids.includes(m.id));
   return (
     <li className={`hist-row${active ? " is-active" : ""}`} style={style} onPointerEnter={onHover}>
-      <button type="button" className="hist-open" data-replay-id={`history-${m.id}`} onClick={() => void history.open(m.id)}>
+      <button type="button" className="hist-open" onClick={() => void history.open(m.id)}>
         <span className="hist-title"><Highlight text={m.title} query={query} /></span>
         <span className="hist-meta">
           {current ? <span className="hist-current">当前</span> : running ? <span className="hist-current"><LoaderCircle className="spin" size={12} strokeWidth={1.8} aria-hidden="true" />后台回答中</span> : <MetaParts items={[`${m.answers} 个回答`, ago(m.updatedAt)]} />}

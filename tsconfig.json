@@ -13,8 +13,7 @@
     "verbatimModuleSyntax": true,
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
-    "types": ["node", "vite/client"],
-    "paths": { "@henjicc/web-replay-probe": ["../Henji-AI/packages/web-replay-probe/src/index.ts"] }
+    "types": ["node", "vite/client"]
   },
   "include": ["src", "server", "shared", "vite.config.ts"]
 }

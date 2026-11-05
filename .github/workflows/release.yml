@@ -6,11 +6,6 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
-# 痕迹AI 录制探针还没发布到 npm，构建时取痕迹仓库里的源码，放在本仓库旁边（vite.config.ts 与 tsconfig.json 按 ../Henji-AI 引用）。
-# 固定到一个提交，探针更新后改这里。
-env:
-  PROBE_REF: 564ade5c7d9560aabe52a0d4540b596e730e1fdd
-
 jobs:
   build:
     permissions:
@@ -28,13 +23,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: zhiduoshao
-
-      - uses: actions/checkout@v4
-        with:
-          repository: henjicc/Henji-AI
-          ref: ${{ env.PROBE_REF }}
-          path: Henji-AI
-          sparse-checkout: packages/web-replay-probe
 
       - uses: actions/setup-node@v4
         with:

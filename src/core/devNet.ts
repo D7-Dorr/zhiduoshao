@@ -18,7 +18,7 @@ export const devFetch: HttpFetch = async (url, init) => {
   if (init.body !== undefined && init.body !== null && typeof init.body !== "string") throw new Error("开发转发只支持文本请求体");
   const headers: Record<string, string> = {};
   new Headers(init.headers).forEach((v, k) => { headers[k] = v; });
-  // 展开调用方的 init：痕迹探针在里面放了标记，它对 window.fetch 的监听据此不再重复录这一次
+  // 展开调用方的 init：保留 signal 等调用方字段，一并带进转发请求
   const res = await fetch("/__zds/net", {
     ...init,
     method: "POST",
@@ -156,13 +156,13 @@ function fromBase64(text: string) {
 // ---- 重放 ----
 
 function replay(name: string, pace: Pace): HttpFetch {
-  // 第一次请求时才读数据包：痕迹重演时请求由探针直接给出，不会走到这里，也就不需要开发服务器
+  // 第一次请求时才读数据包，之前不必访问开发服务器
   let loading: Promise<{ calls: PackCall[]; byKey: Map<string, number[]> }> | null = null;
   const used = new Set<number>();
   let total = 0;
   let missing = 0;
 
-  // init 是触发读取的那次请求的：展开它带上痕迹探针的标记，痕迹录制时不把读数据包录成一次调用
+  // init 是触发读取的那次请求的：读包时清掉它的 headers/body/signal，免得这次读随那次请求一起被取消
   const load = (init: RequestInit) => (loading ??= (async () => {
     const res = await fetch(packUrl(name), { ...init, method: "GET", headers: undefined, body: undefined, signal: undefined, redirect: "follow" });
     if (!res.ok) throw new Error(res.status === 404 ? `没有数据包「${name}」` : `读取数据包「${name}」失败（HTTP ${res.status}）`);

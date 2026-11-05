@@ -68,7 +68,7 @@ export function Home() {
     <main className={`home${empty ? " is-empty" : ""}${empty === null ? " is-pending" : ""}`}>
       <header className="home-titlebar" {...drag}>
         <HistoryButton />
-        <button type="button" className="icon-btn" aria-label="设置" data-replay-id="settings" onClick={settingsActions.open}>
+        <button type="button" className="icon-btn" aria-label="设置" onClick={settingsActions.open}>
           <Settings size={16} strokeWidth={1.6} />
         </button>
         <WindowControls />
@@ -86,7 +86,6 @@ export function Home() {
           <label className="visually-hidden" htmlFor="home-input">问题</label>
           <textarea
             id="home-input"
-            data-replay-id="ask-input"
             ref={ref}
             rows={1}
             placeholder={att.items.length ? "关于图片想了解什么？" : "想知道什么，或者在纠结什么？"}
@@ -116,7 +115,7 @@ export function Home() {
               <input ref={file} type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden
                 onChange={(e) => { att.add([...(e.target.files ?? [])]); e.target.value = ""; ref.current?.focus(); }} />
             </div>
-            <button type="submit" className="send" aria-label="提问" data-replay-id="ask-submit" disabled={!canSend}>
+            <button type="submit" className="send" aria-label="提问" disabled={!canSend}>
               <ArrowUp size={16} strokeWidth={2} />
             </button>
           </div>
