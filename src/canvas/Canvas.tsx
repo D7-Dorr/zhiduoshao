@@ -86,30 +86,31 @@ function Edges() {
         const n = nodes[id];
         const dim = focus && !focus.lit.has(id);
         const out = [];
-        // 路径写在 CSS d 属性上，才能和节点位移使用同一过渡；还没出现的延伸问题等它出现时再画，连线随之长出来
+        // 连线同时写原生 d 与 CSS d、两处取同一路径：Chromium 上 CSS d 覆盖原生属性，沿 transition: d 随节点位移补间；
+        // WebKit 不认 CSS d，靠原生 d 才画得出线，代价是连线不补间、直接跟到新位置。还没出现的延伸问题等它出现时再画，连线随之长出来
         if (n.parent && pos[n.parent] && !isHeld({ nodes, revealing }, id)) {
           const on = focus?.path.has(id) && focus.path.has(n.parent);
-          out.push(<path key={id} pathLength={1} className={`edge${on ? " on-path" : ""}${dim ? " dim" : ""}`} style={{ d: `path("${edgePath(pos[n.parent], pos[id])}")` }} />);
+          out.push(<path key={id} pathLength={1} className={`edge${on ? " on-path" : ""}${dim ? " dim" : ""}`} d={edgePath(pos[n.parent], pos[id])} style={{ d: `path("${edgePath(pos[n.parent], pos[id])}")` }} />);
         }
         // 对比节点：点线连回原节点；综合节点：虚线连回来源节点。原节点被关闭、变回延伸问题后不再连
         const answered = (x: string) => vis.has(x) && nodes[x].kind === "answer";
         if (n.compareOf && answered(n.compareOf)) {
-          out.push(<path key={`cmp-${id}`} className={`edge is-compare${dim ? " dim" : ""}`} style={{ d: `path("${edgePath(pos[n.compareOf], pos[id])}")` }} />);
+          out.push(<path key={`cmp-${id}`} className={`edge is-compare${dim ? " dim" : ""}`} d={edgePath(pos[n.compareOf], pos[id])} style={{ d: `path("${edgePath(pos[n.compareOf], pos[id])}")` }} />);
         }
         for (const l of n.links) {
-          if (answered(l)) out.push(<path key={`${l}-${id}`} className={`edge is-link${dim ? " dim" : ""}`} style={{ d: `path("${edgePath(pos[l], pos[id])}")` }} />);
+          if (answered(l)) out.push(<path key={`${l}-${id}`} className={`edge is-link${dim ? " dim" : ""}`} d={edgePath(pos[l], pos[id])} style={{ d: `path("${edgePath(pos[l], pos[id])}")` }} />);
         }
         return out;
       })}
       {Object.entries(ends).map(([id, box]) => pos[id] && !revealing[id] && (
-        <path key={`end-${id}`} pathLength={1} className={`edge${focus?.path.has(id) ? " on-path" : ""}${focus && !focus.lit.has(id) ? " dim" : ""}`} style={{ d: `path("${edgePath(pos[id], box)}")` }} />
+        <path key={`end-${id}`} pathLength={1} className={`edge${focus?.path.has(id) ? " on-path" : ""}${focus && !focus.lit.has(id) ? " dim" : ""}`} d={edgePath(pos[id], box)} style={{ d: `path("${edgePath(pos[id], box)}")` }} />
       ))}
       {/* 连到输入框的虚线跟着输入框淡入淡出 */}
       {Object.entries(slots).map(([p, box]) => pos[p] && (
-        <path key={`slot-${p}`} className={`edge is-slot${!revealing[p] && shown.split(" ").includes(p) ? " is-shown" : ""}`} style={{ d: `path("${edgePath(pos[p], box)}")` }} />
+        <path key={`slot-${p}`} className={`edge is-slot${!revealing[p] && shown.split(" ").includes(p) ? " is-shown" : ""}`} d={edgePath(pos[p], box)} style={{ d: `path("${edgePath(pos[p], box)}")` }} />
       ))}
       {picked.slice(1).map((id, i) => (
-        <path key={`sel-${picked[i]}-${id}`} className="sel-link" style={{ d: `path("${selectionPath(pos[picked[i]], pos[id])}")` }} />
+        <path key={`sel-${picked[i]}-${id}`} className="sel-link" d={selectionPath(pos[picked[i]], pos[id])} style={{ d: `path("${selectionPath(pos[picked[i]], pos[id])}")` }} />
       ))}
     </svg>
   );
